@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      PLANT_API_KEY: "tpsg-Lcw9MKycXE12SB1iFCH48MficndVwoT"
+      PLANT_API_ENDPOINT: "https://api.metisai.ir/api/v1/wrapper/openai_chat_completion/chat/completions"

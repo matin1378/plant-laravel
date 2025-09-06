@@ -1,0 +1,24 @@
+# Gitpod config for Laravel (PHP 8.2 + Composer + SQLite)
+# Opens a VS Code-like IDE in the browser and runs the app on port 8000.
+tasks:
+  - name: Setup PHP & Composer
+    init: |
+      sudo apt-get update
+      sudo apt-get install -y php php-cli php-mbstring php-xml php-curl php-zip php-sqlite3 unzip
+      EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
+      php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+      ACTUAL_SIGNATURE="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+      if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then >&2 echo 'ERROR: Invalid composer installer signature'; rm composer-setup.php; exit 1; fi
+      php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+      rm composer-setup.php
+      composer install --no-interaction --prefer-dist
+      cp -n .env.gitpod .env || true
+      mkdir -p database
+      touch database/database.sqlite
+      php artisan key:generate
+    command: |
+      php artisan serve --host=0.0.0.0 --port=8000
+ports:
+  - port: 8000
+    onOpen: open-preview
+    visibility: public
